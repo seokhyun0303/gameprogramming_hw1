@@ -6,6 +6,9 @@ TagManager:
   tags:
   - Bullet
   - Target
+  - Ground
+  - obstacle
+  - base
   layers:
   - Default
   - TransparentFX
