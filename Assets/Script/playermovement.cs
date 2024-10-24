@@ -75,7 +75,8 @@ public class playermovement : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("energy"))
         {
-            Vector3 bounceDirection = -transform.forward;
+            Vector3 collisionNormal = collision.contacts[0].normal; // 충돌한 지점의 법선 벡터
+            Vector3 bounceDirection = collisionNormal;
 
 
             rb.velocity = Vector3.zero; // 기존 속도를 초기화해서 이전 힘 제거
