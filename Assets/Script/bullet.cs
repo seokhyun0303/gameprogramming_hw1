@@ -8,7 +8,7 @@ public class bullet : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         // 충돌한 오브젝트가 "Bullet" 태그를 가지고 있는지 확인
-        if (other.CompareTag("obstacle"))
+        if (other.CompareTag("obstacle") || other.CompareTag("energy"))
         {
 
             // 총알도 제거

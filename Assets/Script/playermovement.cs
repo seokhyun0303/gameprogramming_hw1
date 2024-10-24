@@ -9,6 +9,7 @@ public class playermovement : MonoBehaviour
     private float jumpForce = 30f; // 점프의 힘
     private bool isGrounded = true; // 점프 가능 상태 확인용
     private Rigidbody rb;
+  
 
     // 이동 가능한지 여부를 관리하는 변수
     private bool canMoveForward = true;
@@ -16,24 +17,28 @@ public class playermovement : MonoBehaviour
     private bool canMoveLeft = true;
     private bool canMoveRight = true;
 
+    private bool isBouncing = false; // 튕겨 나가는 상태를 관리하는 변수
+    private float bounceCooldown = 0.2f;
+
     void Start()
     {
         rb = GetComponent<Rigidbody>();
     }
 
-    // Update is called once per frame
     void Update()
     {
-        move();
+        // 튕겨 나가는 동안은 이동 제한
+        if (!isBouncing)
+        {
+            move();
+        }
         jump();
     }
 
     void move()
     {
         float mouseX = Input.GetAxis("Mouse X");
-        float mouseY = Input.GetAxis("Mouse Y");
         transform.Rotate(0, mouseX * rotationspeed * Time.deltaTime, 0);
-        // transform.Rotate(-mouseY * rotationspeed * Time.deltaTime, 0, 0);
 
         if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow))
         {
@@ -57,14 +62,6 @@ public class playermovement : MonoBehaviour
         }
     }
 
-    void FixedUpdate()
-    {
-        if (!isGrounded)
-        {
-            rb.AddForce(Vector3.down * 20f);
-        }
-    }
-
     void jump()
     {
         if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
@@ -74,46 +71,58 @@ public class playermovement : MonoBehaviour
         }
     }
 
-    // 충돌을 감지하여 해당 방향의 이동을 제한
-    private void OnCollisionEnter(Collision collision)
+    void OnCollisionEnter(Collision collision)
     {
+        if (collision.gameObject.CompareTag("energy"))
+        {
+            Vector3 bounceDirection = -transform.forward;
+
+
+            rb.velocity = Vector3.zero; // 기존 속도를 초기화해서 이전 힘 제거
+            rb.AddForce(bounceDirection * 50f, ForceMode.Impulse);
+
+            // 튕겨 나가는 동안 이동 불가
+            StartCoroutine(DisableMovementAfterBounce());
+        }
+
         if (collision.gameObject.CompareTag("obstacle"))
         {
-            // 충돌 방향을 계산
             Vector3 contactNormal = collision.contacts[0].normal;
 
-            // 전방(앞쪽)으로의 이동 제한
             if (contactNormal.z > 0.5f)
             {
                 canMoveForward = false;
             }
-            // 후방(뒤쪽)으로의 이동 제한
             if (contactNormal.z < -0.5f)
             {
                 canMoveBackward = false;
             }
-            // 좌측으로의 이동 제한
             if (contactNormal.x > 0.5f)
             {
                 canMoveLeft = false;
             }
-            // 우측으로의 이동 제한
             if (contactNormal.x < -0.5f)
             {
                 canMoveRight = false;
             }
         }
 
-        // 바닥에 닿았을 때 점프 가능 상태로 변경
         if (collision.gameObject.CompareTag("Ground"))
         {
             isGrounded = true;
         }
     }
 
-    private void OnCollisionExit(Collision collision)
+    // 일정 시간 동안 이동 제한 코루틴
+    IEnumerator DisableMovementAfterBounce()
     {
-        // 충돌에서 벗어났을 때 다시 이동 가능하도록 설정
+        isBouncing = true; // 튕겨 나가는 동안 이동 불가
+        yield return new WaitForSeconds(bounceCooldown); // 1초 대기 (원하는 시간으로 조정 가능)
+        isBouncing = false; // 다시 이동 가능
+    }
+
+    void OnCollisionExit(Collision collision)
+    {
         if (collision.gameObject.CompareTag("obstacle"))
         {
             canMoveForward = true;
@@ -123,21 +132,19 @@ public class playermovement : MonoBehaviour
         }
     }
 
-    private void OnTriggerEnter(Collider other)
+    void OnTriggerEnter(Collider other)
     {
-        // Base와 충돌 시 (킬 카운트가 목표치에 도달했을 때 승리)
-        if (other.CompareTag("base"))
-        {
-            if (GameManager.instance.killCount >= GameManager.instance.killGoal)
-            {
-                GameManager.instance.WinGame();
-            }
-        }
-
-        // Enemy와 충돌 시 즉시 패배
+        // 적과 충돌하면 게임 오버 처리
         if (other.CompareTag("Target"))
         {
-            GameManager.instance.LoseGame();
+            GameManager.instance.LoseGame(); // 적과 충돌 시 즉시 게임 오버 처리
+            return; // 튕겨 나가는 로직을 실행하지 않도록 바로 반환
+        }
+
+        if (other.CompareTag("base") && GameManager.instance.killCount >=5)
+        {
+            GameManager.instance.WinGame(); // 적과 충돌 시 즉시 게임 오버 처리
+            return; // 튕겨 나가는 로직을 실행하지 않도록 바로 반환
         }
     }
 }

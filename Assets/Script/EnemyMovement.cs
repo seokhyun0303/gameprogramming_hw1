@@ -5,7 +5,7 @@ using UnityEngine;
 public class EnemyMovement : MonoBehaviour
 {
     public BoxCollider moveArea;      // 움직일 수 있는 영역 (BoxCollider)
-    public float speed = 4f;          // 적의 이동 속도
+    public float speed = 10f;          // 적의 이동 속도
     private Vector3 moveDirection;    // 현재 이동 방향
     private float moveDuration;       // 이동할 시간
     private float moveStartTime;      // 이동이 시작된 시간

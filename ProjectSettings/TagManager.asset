@@ -9,6 +9,8 @@ TagManager:
   - Ground
   - obstacle
   - base
+  - enengy
+  - energy
   layers:
   - Default
   - TransparentFX

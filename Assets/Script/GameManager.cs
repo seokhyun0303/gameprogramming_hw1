@@ -4,7 +4,8 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
-    public static GameManager instance; 
+    public static GameManager instance;
+    public GameObject energyshleid;
 
     public int killCount = 0; 
     public int killGoal = 5; 
@@ -23,7 +24,15 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    
+    private void Update()
+    {
+        if(killCount == 5)
+        {
+            Destroy(energyshleid);
+        }
+    }
+
+
     public void AddKill()
     {
         killCount++;
