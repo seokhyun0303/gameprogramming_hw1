@@ -67,7 +67,7 @@ public class FSM: MonoBehaviour
     // 플레이어 추적 상태 설정
     private void SetChasePlayerState()
     {
-        // 초기 설정이 필요하다면 여기에 추가 가능
+        
     }
 
     private void ChasePlayer()
@@ -99,7 +99,7 @@ public class FSM: MonoBehaviour
         avoidTimer -= Time.deltaTime;
         transform.Translate(avoidDirection * speed * Time.deltaTime, Space.World); // 새로운 회피 방향으로 이동
 
-        // 회피 시간이 끝나면 플레이어 추적 상태로 변경
+        
         if (avoidTimer <= 0)
         {
             ChangeState(State.ChasingPlayer);
