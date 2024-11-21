@@ -9,7 +9,8 @@ public class playermovement : MonoBehaviour
     private float jumpForce = 30f; // 점프의 힘
     private bool isGrounded = true; // 점프 가능 상태 확인용
     private Rigidbody rb;
-  
+    private Animator animator;
+
 
     // 이동 가능한지 여부를 관리하는 변수
     private bool canMoveForward = true;
@@ -23,6 +24,7 @@ public class playermovement : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody>();
+        animator = GetComponent<Animator>();
     }
 
     void Update()
@@ -40,25 +42,56 @@ public class playermovement : MonoBehaviour
         float mouseX = Input.GetAxis("Mouse X");
         transform.Rotate(0, mouseX * rotationspeed * Time.deltaTime, 0);
 
+        bool isFront = false;
+        bool isBack = false;
+        bool isRight = false;
+        bool isLeft = false;
+
         if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow))
         {
             if (canMoveForward)
+            {
                 transform.Translate(0, 0, speed * Time.deltaTime);
+                isFront = true;
+            }
         }
         if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow))
         {
             if (canMoveBackward)
+            {
                 transform.Translate(0, 0, -speed * Time.deltaTime);
+                isBack = true;
+            }
         }
         if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
         {
             if (canMoveLeft)
+            {
                 transform.Translate(-speed * Time.deltaTime, 0, 0);
+                isLeft = true;
+            }
         }
         if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))
         {
             if (canMoveRight)
+            {
                 transform.Translate(speed * Time.deltaTime, 0, 0);
+                isRight = true;
+            }
+        }
+        if (isGrounded)
+        {
+            animator.SetBool("isFront", isFront);
+            animator.SetBool("isBack", isBack);
+            animator.SetBool("isLeft", isLeft);
+            animator.SetBool("isRight", isRight);
+        }
+        else
+        {
+            animator.SetBool("isFront", false);
+            animator.SetBool("isBack", false);
+            animator.SetBool("isLeft", false);
+            animator.SetBool("isRight", false);
         }
     }
 
