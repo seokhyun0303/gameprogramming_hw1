@@ -79,7 +79,14 @@ public class playermovement : MonoBehaviour
                 isRight = true;
             }
         }
-        if (isGrounded)
+        if (GameManager.instance.ispause)
+        {
+            animator.SetBool("isFront", false);
+            animator.SetBool("isBack", false);
+            animator.SetBool("isLeft", false);
+            animator.SetBool("isRight", false);
+        }
+        else if (isGrounded)
         {
             animator.SetBool("isFront", isFront);
             animator.SetBool("isBack", isBack);

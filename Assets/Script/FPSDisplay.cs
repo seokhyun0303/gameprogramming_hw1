@@ -9,13 +9,21 @@ public class FPSDisplay : MonoBehaviour
 
     void Update()
     {
-        // deltaTime 계산
-        deltaTime += (Time.deltaTime - deltaTime) * 0.1f;
+        if (GameManager.instance.ispause)
+        {
+            fpsText.text = $"FPS: 0";
+        }
+        else
+        {
+            // deltaTime 계산
+            deltaTime += (Time.deltaTime - deltaTime) * 0.1f;
 
-        // FPS 계산
-        float fps = 1.0f / deltaTime;
+            // FPS 계산
+            float fps = 1.0f / deltaTime;
 
-        // Text 업데이트
-        fpsText.text = $"FPS: {Mathf.Ceil(fps)}";
+            // Text 업데이트
+            fpsText.text = $"FPS: {Mathf.Ceil(fps)}";
+        }
+        
     }
 }
