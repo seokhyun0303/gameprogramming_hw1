@@ -8,9 +8,20 @@ public class ObjectSpawner : MonoBehaviour
     public BoxCollider spawnArea;      // 스폰 영역 (Box Collider 사용)
 
     public int spawnCount = 5;        // 스폰할 오브젝트 수
+    public float spawnDelay = 2.5f;     // 스폰 지연 시간 (초)
 
     void Start()
     {
+        // 4초 뒤 스폰을 시작하는 코루틴 호출
+        StartCoroutine(SpawnAfterDelay());
+    }
+
+    IEnumerator SpawnAfterDelay()
+    {
+        // 지정된 시간만큼 대기
+        yield return new WaitForSeconds(spawnDelay);
+
+        // 지정된 수만큼 오브젝트를 스폰
         for (int i = 0; i < spawnCount; i++)
         {
             SpawnRandomObject();
@@ -40,3 +51,4 @@ public class ObjectSpawner : MonoBehaviour
         return new Vector3(randomX, randomY, randomZ);
     }
 }
+
