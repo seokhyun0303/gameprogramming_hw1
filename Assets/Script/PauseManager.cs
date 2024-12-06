@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.EventSystems;
 
 public class PauseManager : MonoBehaviour
 {
@@ -33,6 +34,7 @@ public class PauseManager : MonoBehaviour
             isPaused = true;
             GameManager.instance.ispause = true;
         }
+        EventSystem.current.SetSelectedGameObject(null);
     }
 }
 
